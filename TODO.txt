@@ -1,0 +1,2 @@
+Fikse switchene
+Fikse bug som roterer 3 ganger på slitten av dagen
