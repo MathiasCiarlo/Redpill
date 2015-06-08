@@ -175,14 +175,6 @@ boolean timeForNextState() {
         return false;
     }
 
-    /*
-      int nextNextState = nextState + 1;
-      if (nextNextState > 3)
-      nextNextState -= 4;
-
-      int nextNextRotationTime = pillTimes[nextNextState];
-    */
-
     // Check if have entered the next time state
     if (timeInt >= nextStateTime)// && timeInt < nextNextRotationTime)
         return true;
