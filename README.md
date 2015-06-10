@@ -26,9 +26,9 @@ Arduinoen er programmert som en tilstandsmaskin. Det er fire tilstander: 0, 1, 2
 Hvis arduinoen kobles til en datamaskin vil status sendes via seriell kommunikasjon over USB til port 9600 slik at det kan skrives ut til terminal. Det finnes flere hjelpefunksjoner for å skape pene utskrifter og å generellt skape en god oversikt over systemets tilstand til enhver tid.
 
 ###Biblioteker
-- "Time.h"    (For å holde tiden)
-- "Stepper.h" (For å rotere kamprene, steppermotoren)
-- "Servo.h"   (For å åpne fallemmen, servoen)
+- Time.h    (For å holde tiden)
+- Stepper.h (For å rotere kamprene, steppermotoren)
+- Servo.h   (For å åpne fallemmen, servoen)
 
 ###Variable
 Globale variable som er verdt å nevne er *currentState*, *pillTimes[]*, *switchValues[]* og *boolean readyToServe*. *pillTimes[]* holder på de fire utleveringstidspunkene. *switchValues[]* holder på tilstanden til de fire bryterne, 1 betyr på, 0 betyr av.
