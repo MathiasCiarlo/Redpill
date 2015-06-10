@@ -33,17 +33,17 @@ Hvis arduinoen kobles til en datamaskin vil status sendes via seriell kommunikas
 ###Variable
 Globale variable som er verdt å nevne er *currentState*, *pillTimes[]*, *switchValues[]* og *boolean readyToServe*. *pillTimes[]* holder på de fire utleveringstidspunkene. *switchValues[]* holder på tilstanden til de fire bryterne, 1 betyr på, 0 betyr av.
 
-Konstanter er HATCH_TIME og RESET_TIME. Disse styrer hvor lenge fallemmen er åpen, og etter hvor mange sekunder klokken skal resettes under testing.
+Konstanter er HATCH_TIME og RESET_TIME. Disse styrer hvor lenge fallemmen er åpen, og etter hvor mange sekunder klokken skal resettes under testing. Disse er deklarert øverst i koden som konstanter for å skape oversikt og unngå hardkoding.
 
 ###Hovedløkke
-Etter at initialtilstand og input/output er initialisert i funksjonen *setup()* entres hovedløkken, altså funksjonen *loop()*. En stor del av koden er innkapslet i en if-test som kun aktiveres en gang i sekundet. Dette er gjort for at utskrift til terminal under testing blir leselig. Følgende operasjoner er innkapslet:
+Etter at initialtilstand og input/output er initialisert i funksjonen *setup()* entres hovedløkken, altså funksjonen *loop()*. Her er en stor del av koden innkapslet i en if-test som kun aktiveres en gang i sekundet. Dette er gjort for at utskrift til terminal under testing blir leselig. Følgende operasjoner er innkapslet:
 - Bryternes tilstand leses (switchValues[] oppdateres)
 - Det sjekkes om det er tid for å gå inn i neste state gjennom funksjonen *timeForNextState()*, denne er beskrevet nedenfor. I så fall kalles goToNextState() som korrekt endrer *currentState* til neste. For eksempel kan vi gå fra tilstand 2 til 3 og deretter fra 3 til 0. Så roterer kamrene ett hakk ved hjelp av funkjsonen *rotateSteps()*. Videre sjekkes det om bryteren for denne tilstanden er *på*, som betyr at en dose skal utleveres for dette tidsrommet. I så fall aktiveres knappen og grønn LED skrus på. Hvis bryteren var *av* deaktiveres knappen og det blå lyset skrus på.
 
-Til slutt testes det om knappen er trykket inn. Dette skjer utenfor ett-sekunds-innkapslingen, for å sørge for at hendelsen blir fanget opp. Når knappetrykket registreres sjekkes det om knappen er aktivert eller ikke, dette gjennom variablen *readyToServe*. Hvis ja kalles funksjonen *openHatch()* for å åpne fallemmen, blått lys aktiveres og knappen deaktiveres igjen.
+Til slutt testes det om knappen er trykket inn. Dette skjer utenfor ett-sekunds-innkapslingen for å sørge for at hendelsen blir fanget opp. Når knappetrykket registreres sjekkes det om knappen er aktivert eller ikke, dette gjennom variablen *readyToServe*. Hvis ja kalles funksjonen *openHatch()* for å åpne fallemmen, blått lys aktiveres og knappen deaktiveres igjen.
 
 ###timeForNextState()
-Denne funksjonen er en svært viktig del av systemet. Funksjonens hensikt er å avklare om vi tidsmessig har beveget oss inn i neste state. Her sjekkes det først hva klokken er, og så slås det opp i tabellen *pillTimes[]* for neste state (eller indeks) for å sjekke om nåtid er større enn neste tid. For å gjøre måtte tiden trikses med. Dette skjer i funksjonen *getTimeString()*:
+Denne funksjonen er en svært viktig del av systemet. Funksjonens hensikt er å avklare om vi tidsmessig har beveget oss inn i neste state. Her sjekkes det først hva klokken er, og så slås det opp i tabellen *pillTimes[]* for neste state (eller indeks) for å sjekke om nåtid er større enn neste tid. For å realisere dette måtte tiden trikses med. Dette skjer i funksjonen *getTimeString()*:
 
 Her hentes først time, minutt og sekund. Så gjøres hver av disse om til to tegn lange tekststrenger. For eksempel vil minutt=8 bli gjort om til "08". Så konkatineres de tre strengene, slik at vi får et klokkeslett på formen "hhmmss". Dette returneres.
 
@@ -52,4 +52,3 @@ Tilbake i funksjonen vår gjøres denne tekststrengen om til et heltall. Klokken
 ###Annet
 - I en reell brukssituasjon er ville det ikke vært nødvendig å sjekke om vi har gått inn i neste tidsperiode eller om bryterne er skrudd på hvert sekund, men mye sjeldnere. Dette er gjort på grunn av testingen, utleveringstidspunkene er nemlig satt til 2, 10, 18 og 26 sekunder.
 - Annenhver gang kamrene roterer brukes verdien -29 og -28, dette er hvor langt steppermotoren skal rotere. For å få det til å gå opp at 360 grader skal tilsvare 28 kamre, må steppermotoren gå et sted mellom 28 og 29 "steps". Dette oppnår vi ved hjelp av å gå til 28 og 29 annenhver gang.
-- 
