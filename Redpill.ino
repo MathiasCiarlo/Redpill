@@ -1,5 +1,5 @@
 // The dipsenser will dispense at 0800, 1200, 1600, 2000.
-// (While testing at 10, 20, 30, 40 secs).
+// (While testing at 2, 10, 18, 26 seconds).
 // If the dispence button is not pressed within the next time, the
 // the chamber rotates past.
 
@@ -10,7 +10,6 @@
 #include <Time.h>
 #include <Stepper.h>
 #include <Servo.h>
-
 
 // Pins-------------------
 const int hatchPin = 13;
@@ -33,11 +32,12 @@ const int ledPinG = 2;
 
 // Constants---------------
 const int HATCH_TIME = 1000;
-const int ROTATION_TIME = 2000;
+const int RESET_TIME = 32; // DEBUG
 
 // At which times pills are to be dispenced.
 int pillTimes[4];
 
+// Globals
 // Wich of the times to use.
 int switchValues[4];
 
@@ -46,7 +46,6 @@ int currentState = 3;
 
 int prevSec = -1;
 int currSec = 0;
-int resetTime = 32; // DEBUG
 
 boolean readyToServe = false;
 boolean longRotation = true;
@@ -121,8 +120,8 @@ void loop() {
         String status = "State: " + String(currentState);
         print(status);
 
-        // Reset at resetTime seconds beyond midnight for testing purposes.
-        if (currSec >= resetTime) {
+        // Reset at RESET_TIME seconds beyond midnight for testing purposes.
+        if (currSec >= RESET_TIME) {
             setTime(startTime);
         }
         prevSec = currSec;
@@ -142,7 +141,6 @@ void loop() {
 
 
 // Returns true if we have entered next state
-// Input: int (0-3)
 boolean timeForNextState() {
     int nextState = (currentState == 3) ? 0 : currentState + 1;
     int nextStateTime = pillTimes[nextState];
@@ -161,7 +159,7 @@ boolean timeForNextState() {
     }
 
     // Check if have entered the next time state
-    if (timeInt >= nextStateTime)// && timeInt < nextNextRotationTime)
+    if (timeInt >= nextStateTime)
         return true;
 
     return false;
@@ -256,6 +254,7 @@ void setPinModes() {
     pinMode(hatchPin, OUTPUT);
 }
 
+// Had to be inverted because we put our switches upside down...
 void updateSwitchValues() {
     switchValues[0] = !digitalRead(switch1Pin);
     switchValues[1] = !digitalRead(switch2Pin);
@@ -263,6 +262,7 @@ void updateSwitchValues() {
     switchValues[3] = !digitalRead(switch4Pin);
 }
 
+// For debugging
 void printSwitchValues() {
     Serial.print("Switch values: ");
     for (int i = 0; i < 4; i++) {
@@ -272,6 +272,7 @@ void printSwitchValues() {
     Serial.println();
 }
 
+// Prints current time and an input string
 void print(String s) {
     Serial.print("[");
     printTime();
