@@ -43,11 +43,10 @@ int switchValues[4];
 
 // Initialization, set current state to last state
 int currentState = 3;
-int lockedState = 3;
 
 int prevSec = -1;
 int currSec = 0;
-int resetTime; // DEBUG
+int resetTime = 32; // DEBUG
 
 boolean readyToServe = false;
 boolean longRotation = true;
@@ -80,7 +79,6 @@ void setup() {
     pillTimes[1] = 10;
     pillTimes[2] = 18;
     pillTimes[3] = 26;
-    resetTime = 32;
 
     switchValues[0] = HIGH;
     switchValues[1] = HIGH;
@@ -98,15 +96,7 @@ void loop() {
 
         updateSwitchValues();
         if (currSec % 5 == 0) printSwitchValues(); // DEBUG
-
-	// If all switches are off, nothing will occur.
-        int nextActiveState = getNextActiveState();
-
-        if (nextActiveState == -1)
-            digitalWrite(ledPinB, LOW);
-        else
-            digitalWrite(ledPinB, HIGH);
-
+	
 	// Check if there is time for next state
 	// If so, we rotate
         if (timeForNextState()){
@@ -114,23 +104,24 @@ void loop() {
 	    rotateSteps(1);
             delay(500);
 
-            // If the new state is an active state (the switch is ON
-            // for this state) we rotate to it.
-            if (currentState == nextActiveState && currentState != lockedState) {
-                readyToServe = true;
+            // If the switch is ON for this state we rotate.
+	    if (switchValues[currentState] == HIGH) {
+		readyToServe = true;
                 digitalWrite(ledPinB, LOW);
                 digitalWrite(ledPinG, HIGH);
                 print("Ringing alarm.. Push the button to dispence!");
             }
-
-            // Lock the current state
-            lockedState = currentState;
-        }
+	    else {
+		readyToServe = false;
+		digitalWrite(ledPinG, LOW);
+		digitalWrite(ledPinB, HIGH);
+	    }
+	}
 
         String status = "State: " + String(currentState);
         print(status);
 
-        // Reset at 25 seconds beyond midnight for testing purposes.
+        // Reset at resetTime seconds beyond midnight for testing purposes.
         if (currSec >= resetTime) {
             setTime(startTime);
         }
@@ -154,12 +145,6 @@ void loop() {
 // Input: int (0-3)
 boolean timeForNextState() {
     int nextState = (currentState == 3) ? 0 : currentState + 1;
-
-    // If only one state is activated, we need to avoid to enter it again,
-    // since the next state will be the same.
-    if (nextState == lockedState)
-        return false;
-
     int nextStateTime = pillTimes[nextState];
 
     // Converting the current time to an int that increases
@@ -190,23 +175,6 @@ String getTimeString() {
     String s = String(hour()) + String(minute()) + String(second());
 
     return s;
-}
-
-// Returns the next state by checking current state and switch values
-// Return -1 if all switches are off.
-int getNextActiveState() {
-
-    // Loop trough the states {0, 1, 2, 3} as a ring, from current state.
-    for (int i = 0; i < 4; i++) {
-        int tmpState = currentState + 1 + i;
-
-        if (tmpState > 3)
-            tmpState -= 4;
-
-        if (switchValues[tmpState] == HIGH)
-            return tmpState;
-    }
-    return -1;
 }
 
 // Changes state to next state.
