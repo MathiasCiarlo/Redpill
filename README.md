@@ -1,5 +1,6 @@
 # Redpill - An automatic circular pill dispencer
 Arduino project for the course "inf1510" at UiO.
+[Video](https://youtu.be/IycjOfMeGy4)
 
 ##Red Pill consists of:
 - Rotating disc with 28 pill chambers
