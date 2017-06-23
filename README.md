@@ -2,7 +2,7 @@
 Arduino project for the course "inf1510" at UiO.
 [Video](https://youtu.be/IycjOfMeGy4)
 
-##Red Pill consists of:
+## Red Pill consists of:
 - Rotating disc with 28 pill chambers
 - 4 switches to control which times to dipsose pills
 - Button to control the pill hatch
